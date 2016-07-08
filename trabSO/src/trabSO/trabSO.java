@@ -10,23 +10,31 @@ import java.util.Scanner;
 
 
 public class trabSO {
-	public static 	Process[] buffer=null;
+
 public static void main(String [] args) throws IOException{
-		int M=3;
-		buffer= new Process[M];
-		int numberOfClients=5;
-		
-//		System.out.println("Insira o tamanho do buffer: ");
+		int M=6;
+		int nOfClients=3;
+		PandC PC = new PandC(M);
+//		buffer= new Process[M];
 //		Scanner s = new Scanner(System.in);
+//		System.out.println("Insira o numero de clientes:");
+//		nOfClients=s.nextInt();
+//		System.out.println("Insira o tamanho do buffer: ");
 //		M=s.nextInt();
-		M=3;
-//		Process buffer[]= new Process[M];
+//		
+		Client[] c= new Client[nOfClients];
+		Server server= new Server(PC);
+		Thread thread1[]= new Thread[nOfClients];
 		
-		Client[] c= new Client[numberOfClients];
-		for(int i=0;i<numberOfClients;i++){
-			c[i]=new Client(i);
+		Thread thread2= new Thread(server);
+		thread2.start();
+		for(int i=0;i<nOfClients;i++){
+			c[i]=new Client(i,PC);
+			thread1[i]= new Thread(c[i]);
+			thread1[i].start();
 		}
-	
+		
+		
 }
 
 }

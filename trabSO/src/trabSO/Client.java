@@ -7,11 +7,13 @@ import java.util.ArrayList;
 
 
 
-public class Client implements Runnable{
+public class Client  implements Runnable{
 	
 	int id;
+	PandC buffer;
 	ArrayList <Process> P= new ArrayList<Process>();
-	public Client(int id){
+	
+	public Client(int id, PandC buffer){
 		this.id=id;
 		try {
 			readFile();
@@ -19,6 +21,7 @@ public class Client implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.buffer=buffer;
 	}
 	
 
@@ -43,20 +46,29 @@ try {// tenta ler o arquivo
 } finally {
     if(f !=null){f.close();}
 }
-System.out.println(P.toString());
+//System.out.println(P.toString());
 
 br.close();
 }
-
 public void run(){
+	while(true){
+		System.out.println("cliente"+ this.id);
+		if(P.size()!=0)
+			insert(P.remove(0));
+		else
+			break;
+	}
+	}
+
+public void insert( Process item ){
+	while(buffer.getCont()==buffer.getSizeOfBuffer());
 	
-	
-	
-	
-	
-	
-	
-	
+	buffer.setCont(buffer.getCont()+1);
+	buffer.insert(buffer.getIn(),item);
+	buffer.setIn((buffer.getIn()+1)%buffer.getSizeOfBuffer());
 }
+
+
+
 	
 }

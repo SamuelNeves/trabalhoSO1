@@ -15,7 +15,7 @@ public class Process{
 	}
 	@Override
 	public String toString() {
-		return "Process [name=" + name + ", timeOfExecution=" + timeOfExecution + "]";
+		return "Process name "+ name + " timeOfExecution " + timeOfExecution + "\n";
 	}
 	
 	
