@@ -16,13 +16,13 @@ public class Client  implements Runnable{
 	ArrayList <Process> P= new ArrayList<Process>();
 	
 	private Lock mutex;
-	private Semaphore semaphore;
-	private Semaphore semaphore2;
+	private Semaphore semaphoreFullBuffer;
+	private Semaphore semaphoreEmptyBuffer;
 	public Client(int id, PandC buffer, Semaphore semaphore, Lock m,Semaphore semaphore2){
 		this.id=id;
 		this.mutex=m;
-		this.semaphore=semaphore;
-		this.semaphore2=semaphore2;
+		this.semaphoreFullBuffer=semaphore;
+		this.semaphoreEmptyBuffer=semaphore2;
 		try {
 			readFile();
 		} catch (IOException e) {
@@ -65,12 +65,12 @@ public void run(){
 //		System.out.println("cliente"+ this.id);
 		if(P.size()!=0)
 			try {
-				semaphore.acquire();
+				semaphoreFullBuffer.acquire();
 				mutex.lock();
 					insert(P.remove(0));	
 				mutex.unlock();
 //				semaphore.release();
-				semaphore2.release();
+				semaphoreEmptyBuffer.release();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -79,7 +79,9 @@ public void run(){
 			break;
 	}
 	}
-
+public int  getNumberOfProcess(){
+	return P.size();
+}
 public void insert( Process item ) throws InterruptedException{
 	
 //	while(buffer.getCont()==buffer.getSizeOfBuffer()){

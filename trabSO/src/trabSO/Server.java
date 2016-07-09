@@ -4,20 +4,36 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 
 public class Server implements Runnable{
-	
+	Client[] client;
 	PandC buffer;	
-	Semaphore semaphore;
-	Semaphore semaphore2;
+	Semaphore semaphoreFullBuffer;
+	Semaphore semaphoreEmptyBuffer;
 	Lock mutex;
 	int totalProcessed;
-	public Server(PandC buffer,Semaphore s, Lock m,Semaphore s2){
-		semaphore=s;
-		semaphore2=s2;
+	int totalOfProcess;
+	public Server(PandC buffer,Semaphore s, Lock m,Semaphore s2,Client[] c){
+		client=c;
+		semaphoreFullBuffer=s;
+		semaphoreEmptyBuffer=s2;
 		mutex=m;
 		this.buffer=buffer;
 		this.totalProcessed=0;
+		totalProcessed=0;
+		for(Client i: c){
+			totalOfProcess+=i.getNumberOfProcess();
+		}
 		
 	}
+	
+//	private  boolean checkClients(){
+//		for(Client i: client){
+////			System.out.println("ID"+i.id);
+//			if(i.P.size()!=0 ){	
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 	public Process remove() throws InterruptedException{
 		System.out.println(buffer.getCont());
 		System.out.println(buffer.getCont());
@@ -28,35 +44,31 @@ public class Server implements Runnable{
 		return item;
 	}
 	public void run(){
-		Process retorno;
-		while(true){
+		Process retorno = null;
+		while(totalProcessed<totalOfProcess){
 			
 		try {
-			semaphore2.acquire();
-			System.out.println("saiu laço");
+			semaphoreEmptyBuffer.acquire();
+//			System.out.println("saiu laço");
 			mutex.lock();
 				if(buffer.getCont()!=0)	{
 					retorno=remove();
+					
 					System.out.println("Processo: "+ retorno.getName()+ " Tempo de Execução: "+ retorno.getTimeOfExecution());
-				
 					System.out.println("TOtal processado:"+(totalProcessed));
+					Thread.sleep(100*retorno.getTimeOfExecution());
 				}
+	
 			mutex.unlock();
-			semaphore.release();
-			
-			
+			semaphoreFullBuffer.release();	
 //			try {
 //				this.wait(10*retorno.getTimeOfExecution());
 //			} catch (InterruptedException e) {
-//				 TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-	
 		}
 	}
 	
